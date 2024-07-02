@@ -1,5 +1,5 @@
 /*
- * kafkacat - Apache Kafka consumer and producer
+ * kcat - Apache Kafka consumer and producer
  *
  * Copyright (c) 2015-2019, Magnus Edenhill
  * All rights reserved.
@@ -57,6 +57,10 @@
 #define HAVE_CONTROLLERID 1
 #else
 #define HAVE_CONTROLLERID 0
+#endif
+
+#if RD_KAFKA_VERSION >= 0x01030000
+#define ENABLE_MOCK 1
 #endif
 
 
@@ -157,6 +161,12 @@ struct conf {
         serdes_conf_t *srconf;
         char   *schema_registry_url;
 #endif
+
+#if ENABLE_MOCK
+        struct {
+                int broker_cnt;
+        } mock;
+#endif
 };
 
 extern struct conf conf;
@@ -217,10 +227,10 @@ typedef struct
     int finished;
     int processed;
     lastKey lastkey;
+    void* hand;
     rd_kafka_headers_t *headers;
     const unsigned char *last_header_name;
     size_t last_header_name_len;
-    void* hand;
 } kafkacatMessageContext;
 
 typedef struct
@@ -249,7 +259,7 @@ void json_free (void*);
 /*
  * avro.c
  */
-char *kc_avro_to_json (const void *data, size_t data_len,
+char *kc_avro_to_json (const void *data, size_t data_len, int *schema_idp,
                        char *errstr, size_t errstr_size);
 
 void kc_avro_init (const char *key_schema_name,

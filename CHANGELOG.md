@@ -1,8 +1,39 @@
-# kafkacat v1.7.0
+# kcat v1.8.0
 
+ * Added new mock cluster mode
+   `kcat -M <broker-cnt>` spins up a mock cluster that applications
+   can produce to and consume from.
+ * Mixing modes is now prohibited (e.g., `-P .. -C`).
+ * Producer: Fix stdin buffering: no messages would be produced
+   until Ctrl-D or at least 1024 bytes had accumulated (#343).
+
+
+
+# kcat v1.7.1
+
+The edenhill/kcat image has been updated to librdkafka v1.8.2.
+
+
+# kcat v1.7.0
+
+**kafkacat has been renamed to kcat** to adhere to the
+Apache Software Foundation's (ASF) trademark policies.
+
+ * `kafkacat` is now called `kcat`.
  * Add support for multibyte delimiters to `-D` and `-K` (#140, #280)
  * Add support for `-X partition.assignment.strategy=cooperative-sticky` incremental rebalancing.
  * High-level consumer `-G` now supports exit-on-eof `-e` option (#86)
+ * Avro consumer with -J will now emit `key_schema_id` and `value_schema_id`.
+
+## Upgrade considerations
+
+ * Please rename any `kafkacat.conf` config files to `kcat.conf`.
+   The old path will continue to work for some time but a warning will be
+   printed.
+ * Please rename any `KAFKACAT_CONF` environment variables to `KCAT_CONF`.
+   The old environment variable will continue to work for some time but a
+   warning will be printed.
+
 
 
 # kafkacat v1.6.0
@@ -16,7 +47,7 @@
  * Print broker-id message was produced to (if `-v`),
    or was consumed from (if `-J`).
 
-## Apache Kafke EOS / Transactional Producer support
+## Apache Kafka EOS / Transactional Producer support
 
 Messages can now be produced in a single transaction if `-X transactional.id=..`
 is passed to the producer in `-P` mode.
@@ -39,4 +70,4 @@ And so is this
 
 # Older releases
 
-See https://github.com/edenhill/kafkacat/releases
+See https://github.com/edenhill/kcat/releases

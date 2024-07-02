@@ -13,13 +13,14 @@ source helpers.sh
 topic=$(make_topic_name)
 
 
-# Multi-byte delimiters
+
+# Multi-byte delimiters, partition 0
 
 echo -n "Key1;KeyDel;Value1:MyDilemma::MyDilemma:;KeyDel;Value2:MyDilemma:Key3;KeyDel;:MyDilemma:Value4" |
-    $KAFKACAT -t $topic -K ';KeyDel;' -D ':MyDilemma:' -Z
+    $KCAT -t $topic -p 0 -K ';KeyDel;' -D ':MyDilemma:' -Z
 
 
-output=$($KAFKACAT -C -t $topic -o beginning -e -J |
+output=$($KCAT -C -t $topic -p 0 -o beginning -e -J |
              jq -r '.key + "=" + .payload')
 
 exp="Key1=Value1
@@ -28,10 +29,11 @@ Key3=
 =Value4"
 
 if [[ $output != $exp ]]; then
-    FAIL "Expected '$exp', not '$output'"
+    echo "FAIL: Expected '$exp', not '$output'"
+    exit 1
 fi
 
-topic=$(make_topic_name)
+
 #
 # Single-byte delimiters, partition 1
 #
@@ -41,10 +43,10 @@ echo "The First;Message1
 Is The;
 ;Greatest
 For sure" |
-    $KAFKACAT -t $topic -K ';' -Z
+    $KCAT -t $topic -p 1 -K ';' -Z
 
 
-output=$($KAFKACAT -C -t $topic -o beginning -e -J |
+output=$($KCAT -C -t $topic -p 1 -o beginning -e -J |
              jq -r '.key + "=" + .payload')
 
 exp="The First=Message1
@@ -53,7 +55,8 @@ Is The=
 =For sure"
 
 if [[ $output != $exp ]]; then
-    FAIL "Expected '$exp', not '$output'"
+    echo "FAIL: Expected '$exp', not '$output'"
+    exit 1
 fi
 
-PASS
+
