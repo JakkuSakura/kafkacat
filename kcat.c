@@ -496,7 +496,7 @@ static void producer_run (FILE *fp, char **paths, int pathcnt) {
                 }
 
                 /* Produce message */
-                produce((char *)buf, len, key, key_len, msgflags, buffer);
+                produce((char *)buf, len, key, key_len, msgflags, NULL, buffer);
                 if (msg.headers) {
 					rd_kafka_headers_destroy(msg.headers);
 					msg.headers = 0;
